@@ -81,6 +81,14 @@
     line: pidfile /tmp/chrony.pid
     state: present
 
+- name: Asymworks Baseline (Alpine) | DEBUG -- Touch chrony PIDFILE
+  ansible.builtin.file:
+    path: /tmp/chrony.pid
+    state: touch
+    owner: chrony
+    group: chrony
+    mode: '0666'
+
 - name: Asymworks Baseline (Alpine) | DEBUG -- Dump chrony Config
   when: lookup('env', 'MOLECULE_DEBUG')|bool|default(False)
   ansible.builtin.command:
