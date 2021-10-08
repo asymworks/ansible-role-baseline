@@ -60,9 +60,19 @@
 
 # Setup NTP Server
 - name: Asymworks Baseline (Alpine) | Configure Network Time Server
-  ansible.builtin.template:
-    src: etc/chrony/chrony.conf.j2
-    dest: /etc/chrony/chrony.conf
+  ansible.builtin.lineinfile:
+    path: /etc/chrony/chrony.conf
+    regex: '^pool'
+    line: 'pool {{ ntp_server }} prefer iburst'
+    state: present
+  notify:
+    - Asymworks Baseline (Alpine) | Restart chrony
+
+- name: Asymworks Baseline (Alpine) | Remove NTP Initial Step Slew
+  ansible.builtin.lineinfile:
+    path: /etc/chrony/chrony.conf
+    regex: '^initstepslew'
+    state: absent
   notify:
     - Asymworks Baseline (Alpine) | Restart chrony
 
@@ -74,32 +84,9 @@
     group: chrony
     mode: '0750'
 
-- name: Asymworks Baseline (Alpine) | DEBUG -- Use Temp PIDFILE for chrony
-  when: lookup('env', 'MOLECULE_DEBUG')|bool|default(False)
-  ansible.builtin.lineinfile:
-    path: /etc/chrony/chrony.conf
-    line: pidfile /tmp/chrony.pid
-    state: present
-
-- name: Asymworks Baseline (Alpine) | DEBUG -- Touch chrony PIDFILE
-  ansible.builtin.file:
-    path: /tmp/chrony.pid
-    state: touch
-    owner: chrony
-    group: chrony
-    mode: '0666'
-
-- name: Asymworks Baseline (Alpine) | DEBUG -- Dump chrony Config
-  when: lookup('env', 'MOLECULE_DEBUG')|bool|default(False)
-  ansible.builtin.command:
-    cmd: chronyd -u chrony -p
-
-- name: Asymworks Baseline (Alpine) | DEBUG -- Manually Check chrony
-  when: lookup('env', 'MOLECULE_DEBUG')|bool|default(False)
-  ansible.builtin.command:
-    cmd: chronyd -u chrony -d -x -t 10
-
 - name: Asymworks Baseline (Alpine) | Start Network Time Service
+  # Chrony startup is horribly broken on Github CI
+  when: __molecule_ci is not defined or not __molecule_ci
   ansible.builtin.service:
     name: chronyd
     enabled: true

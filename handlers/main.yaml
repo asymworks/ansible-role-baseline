@@ -5,6 +5,8 @@
   service: name=sshd state=restarted
 
 - name: Asymworks Baseline (Alpine) | Restart chrony
+  # Chrony startup is horribly broken on Github CI
+  when: __molecule_ci is not defined or not __molecule_ci
   service: name=chronyd state=restarted
 
 - name: Asymworks Baseline (Debian) | Restart ntpd

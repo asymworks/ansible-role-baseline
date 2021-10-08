@@ -2,6 +2,11 @@
 - name: Converge
   hosts: all
   pre_tasks:
+    # Set a flag to skip chrony operations for Alpine since Github CI has major issues
+    # running them that I cannot replicate
+    - set_fact:
+        __molecule_ci: true
+
     - include_role:
         name: asymworks.baseline
         tasks_from: pre-tasks.yaml
