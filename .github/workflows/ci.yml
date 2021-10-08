@@ -34,7 +34,7 @@ jobs:
           pip3 install ansible ansible-lint "molecule[docker,lint]"
 
       - name: Lint code
-        run: molecule lint
+        run: molecule lint -s ci
 
   molecule:
     name: Molecule
@@ -72,7 +72,7 @@ jobs:
           pip3 install ansible ansible-lint "molecule[docker,lint]"
 
       - name: Test code
-        run: molecule test
+        run: molecule test --debug -s ci
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'

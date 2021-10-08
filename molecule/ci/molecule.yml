@@ -1,0 +1,27 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+
+platforms:
+  - name: instance
+    image: ${MOLECULE_DOCKER_IMAGE}
+    dockerfile: Dockerfile.j2
+    pre_build_image: false
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    security_opts:
+      - seccomp=unconfined
+    command: ${MOLECULE_DOCKER_COMMAND}
+
+provisioner:
+  name: ansible
+  playbooks:
+    converge: ${MOLECULE_PLAYBOOK:-converge.yml}
+
+lint: |
+  set -e
+  yamllint .
+  ansible-lint .
