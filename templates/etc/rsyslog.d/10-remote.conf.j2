@@ -1,0 +1,19 @@
+# rsyslog configuration file
+# This file is managed by Ansible
+
+# Send all logs to remote syslog via UDP.
+# An on-disk queue is created for this action. If the remote host is
+# down, messages are spooled to disk and sent when it is up again.
+*.* action(
+	type="omfwd"
+	target="{{ syslog_server }}"
+	port="{{ syslog_port }}"
+	protocol="udp"
+	queue.filename="fwdRuleDefault1"  # unique name prefix for spool files
+	queue.type="LinkedList"
+	queue.maxDiskSpace="64m"
+	queue.saveOnShutdown="on"
+	action.resumeRetryCount="-1"
+	action.resumeInterval="30"
+	template="RSYSLOG_ForwardFormat"
+)

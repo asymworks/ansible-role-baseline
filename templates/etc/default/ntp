@@ -1,0 +1,2 @@
+# NTP Configuration (Managed by Ansible)
+NTPD_OPTS="-N {{ ntp_server }}"
