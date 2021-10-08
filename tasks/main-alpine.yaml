@@ -68,6 +68,11 @@
   notify:
     - Asymworks Baseline (Alpine) | Restart chrony
 
+- name: Asymworks Baseline (Alpine) | DEBUG -- Manually Check chrony
+  when: lookup('env', 'MOLECULE_DEBUG')|bool|default(False)
+  ansible.builtin.command:
+    cmd: chronyd -d
+
 - name: Asymworks Baseline (Alpine) | Start Network Time Service
   ansible.builtin.service:
     name: chronyd
