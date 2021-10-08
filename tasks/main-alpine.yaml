@@ -79,7 +79,7 @@
 - name: Asymworks Baseline (Alpine) | DEBUG -- Dump chrony Config
   when: lookup('env', 'MOLECULE_DEBUG')|bool|default(False)
   ansible.builtin.command:
-    cmd: chronyd -u chrony -p 1>&2
+    cmd: chronyd -u chrony -p
 
 - name: Asymworks Baseline (Alpine) | DEBUG -- Manually Check chrony
   when: lookup('env', 'MOLECULE_DEBUG')|bool|default(False)
