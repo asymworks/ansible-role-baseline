@@ -68,6 +68,14 @@
   notify:
     - Asymworks Baseline (Alpine) | Restart chrony
 
+- name: Asymworks Baseline (Alpine) | Check Network Time Service Directories
+  ansible.builtin.file:
+    path: /var/run/chrony
+    state: directory
+    owner: chrony
+    group: chrony
+    mode: '0750'
+
 - name: Asymworks Baseline (Alpine) | DEBUG -- Manually Check chrony
   when: lookup('env', 'MOLECULE_DEBUG')|bool|default(False)
   ansible.builtin.command:
