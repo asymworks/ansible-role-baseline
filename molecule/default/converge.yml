@@ -3,7 +3,7 @@
   hosts: all
   pre_tasks:
     - include_role:
-        name: "ansible-role-baseline"
+        name: asymworks.baseline
         tasks_from: pre-tasks.yaml
 
     # Override the Alpine Diskless Mode fact since the docker container will
@@ -14,7 +14,7 @@
   tasks:
     - name: "Include baseline"
       include_role:
-        name: "ansible-role-baseline"
+        name: asymworks.baseline
   vars:
     asset_name: molecule-container
     asset_tag: c:molecule:01
