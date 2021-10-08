@@ -76,10 +76,15 @@
     group: chrony
     mode: '0750'
 
+- name: Asymworks Baseline (Alpine) | DEBUG -- Dump chrony Config
+  when: lookup('env', 'MOLECULE_DEBUG')|bool|default(False)
+  ansible.builtin.command:
+    cmd: chronyd -u chrony -p
+
 - name: Asymworks Baseline (Alpine) | DEBUG -- Manually Check chrony
   when: lookup('env', 'MOLECULE_DEBUG')|bool|default(False)
   ansible.builtin.command:
-    cmd: chronyd -d
+    cmd: chronyd -u chrony -d
 
 - name: Asymworks Baseline (Alpine) | Start Network Time Service
   ansible.builtin.service:
