@@ -23,10 +23,26 @@
       - msmtp
       - msmtp-mta
       - restic
-      - rsyslog
-      - telegraf
       - ntp
       - vim
+    update_cache: true
+
+# Install Influx Data Repository
+- name: Asymworks Baseline (Debian) | Install Influx Data Package Key
+  ansible.builtin.apt_key:
+    url: https://repos.influxdata.com/influxdb.key
+    state: present
+
+- name: Asymworks Baseline (Debian) | Install Influx Data Repository
+  ansible.builtin.apt_repository:
+    repo: "deb https://repos.influxdata.com/debian {{ ansible_distribution_release }} stable"
+    state: present
+
+# Install Basic Packages
+- name: Asymworks Baseline (Debian) | Install Telegraf Packages
+  ansible.builtin.apt:
+    name: telegraf
+    state: present
     update_cache: true
 
 # Install Rsyslog Package
@@ -34,13 +50,13 @@
   when: rsyslog_enabled
   ansible.builtin.apt:
     name: rsyslog
-    state: latest
-    default_release: "{{ 'stretch-backports' when ansible_distribution_version is version('10', '<') else 'main' }}"
+    state: present
+    default_release: "{{ 'stretch-backports' if ansible_distribution_version is version('10', '<') else None }}"
 
 # Populate /etc/timezone
 - name: Asymworks Baseline (Debian) | Populate /etc/timezone
-  ansible.builtin.template:
-    src: etc/timezone.j2
+  ansible.builtin.copy:
+    content: "{{ timezone }}"
     dest: /etc/timezone
     owner: root
     group: root
@@ -49,7 +65,7 @@
 # Set System Timezone
 - name: Asymworks Baseline (Debian) | Set Timezone
   community.general.timezone:
-    name: "{{ etc_timezone }}"
+    name: "{{ timezone }}"
 
 # Setup NTP Server
 - name: Asymworks Baseline (Debian) | Reset Network Time Servers

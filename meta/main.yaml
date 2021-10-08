@@ -4,9 +4,15 @@
 dependencies: []
 
 galaxy_info:
+  namespace: asymworks
   role_name: baseline
   author: asymworks
   description: Asymworks Linux Baseline Configuration.
   company: "Asymworks, LLC"
   license: "license (BSD, MIT)"
-  min_ansible_version: 2.4
+  min_ansible_version: 4.0
+  platforms:
+    - name: alpine
+      versions: ['3.13', '3.14']
+    - name: debian
+      versions: ['9', '10']

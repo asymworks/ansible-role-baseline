@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "ansible-role-baseline"
+version = "0.1.0"
+description = "Asymworks Linux Baseline Ansible Role"
+authors = ["Jonathan Krauss <jkrauss@asymworks.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+ansible = "^4.6"
+
+[tool.poetry.dev-dependencies]
+ansible-lint = "^5.2"
+molecule = {extras = ["docker", "lint"], version = "^3.5.0" }
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
