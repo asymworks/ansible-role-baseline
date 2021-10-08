@@ -54,15 +54,6 @@
     state: present
     default_release: "{{ 'stretch-backports' if ansible_distribution_version is version('10', '<') else None }}"
 
-# Populate /etc/timezone
-- name: Asymworks Baseline (Debian) | Populate /etc/timezone
-  ansible.builtin.copy:
-    content: "{{ timezone }}"
-    dest: /etc/timezone
-    owner: root
-    group: root
-    mode: '0644'
-
 # Set System Timezone
 - name: Asymworks Baseline (Debian) | Set Timezone
   community.general.timezone:

@@ -72,7 +72,7 @@
   ansible.builtin.service:
     name: chronyd
     enabled: true
-    state: restarted
+    state: started
 
 # Persist /etc/init.d Updates
 - name: Asymworks Baseline (Alpine) | Persist /etc/init.d
