@@ -103,3 +103,19 @@
         name: local
         enabled: true
         state: started
+
+# Disable Firewall IPv6
+- name: Asymworks Baseline (Alpine) | Check IPv6 Kernel Module
+  ansible.builtin.command:
+    cmd: grep ip6_tables /proc/modules
+  register: ret
+  changed_when: false
+  failed_when: ret.rc != 0 and ret.rc != 1
+
+- name: Asymworks Baseline (Alpine) | Disable IPv6 Firewall
+  when: ret.rc == 1
+  ansible.builtin.lineinfile:
+    dest: /etc/ufw/ufw.conf
+    regexp: '^IPV6'
+    line: 'IPV6=no'
+    state: present
