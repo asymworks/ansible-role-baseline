@@ -1,0 +1,76 @@
+---
+name: CI
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 3 * * 5"
+
+defaults:
+  run:
+    working-directory: asymworks.baseline
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the codebase
+        uses: actions/checkout@v2
+        with:
+          path: asymworks.baseline
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - name: Install dependencies
+        run: pip3 install -r requirements.txt
+
+      - name: Lint code
+        run: molecule lint
+
+  molecule:
+    name: Molecule
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: alpine:3.13
+            command: /sbin/init
+
+          - image: alpine:3.14
+            command: /sbin/init
+
+          - image: debian:9
+            command: /lib/systemd/systemd
+
+          - image: debian:10
+            command: /lib/systemd/systemd
+
+    steps:
+      - name: Check out the codebase
+        uses: actions/checkout@v2
+        with:
+          path: asymworks.baseline
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - name: Install dependencies
+        run: pip3 install -r requirements.txt
+
+      - name: Test code
+        run: molecule test
+        env:
+          PY_COLORS: '1'
+          ANSIBLE_FORCE_COLOR: '1'
+          MOLECULE_DOCKER_IMAGE: ${{ matrix.image }}
+          MOLECULE_DOCKER_COMMAND: ${{ matrix.command }}
