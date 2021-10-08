@@ -93,7 +93,7 @@
 - name: Asymworks Baseline (Debian) | Disable IPv6 Firewall
   when: ret.rc == 1
   ansible.builtin.lineinfile:
-    dest: /etc/conf.d/ufw
+    dest: /etc/default/ufw
     regexp: '^IPV6'
     line: 'IPV6=no'
     state: present
