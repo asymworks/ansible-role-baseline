@@ -33,6 +33,7 @@
     update_cache: true
     state: present
     name:
+      - chrony
       - curl
       - msmtp
       - restic
@@ -50,27 +51,34 @@
     group: root
     mode: '0644'
 
+# Disable Busybox NTPd
+- name: Asymworks Baseline (Alpine) | Disable Busybox NTPd
+  ansible.builtin.service:
+    name: ntpd
+    state: stopped
+    enabled: false
+
 # Setup NTP Server
 - name: Asymworks Baseline (Alpine) | Set Network Time Server
   ansible.builtin.lineinfile:
-    path: /etc/conf.d/ntpd
-    regex: '^NTPD_OPTS='
-    line: 'NTPD_OPTS="-N -p {{ ntp_server }}"'
+    path: /etc/chrony/chrony.conf
+    regex: '^pool'
+    line: 'pool {{ ntp_server }} prefer iburst'
     state: present
   notify:
-    - Common (Alpine) | Restart ntpd
+    - Asymworks Baseline (Alpine) | Restart chrony
 
 - name: Asymworks Baseline (Alpine) | Start Network Time Service
   ansible.builtin.service:
-    name: ntpd
+    name: chronyd
     enabled: true
-    state: started
+    state: restarted
 
 # Persist /etc/init.d Updates
 - name: Asymworks Baseline (Alpine) | Persist /etc/init.d
   ansible.builtin.command:
     cmd: lbu inc /etc/init.d
-  when: alpine_diskless or alpine_diskmode
+  when: alpine_diskless
   become: true
   failed_when: ret.stderr != ''
 

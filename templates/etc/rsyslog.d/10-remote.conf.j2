@@ -6,8 +6,8 @@
 # down, messages are spooled to disk and sent when it is up again.
 *.* action(
 	type="omfwd"
-	target="{{ syslog_server }}"
-	port="{{ syslog_port }}"
+	target="{{ rsyslog_server }}"
+	port="{{ rsyslog_port }}"
 	protocol="udp"
 	queue.filename="fwdRuleDefault1"  # unique name prefix for spool files
 	queue.type="LinkedList"

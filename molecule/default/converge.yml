@@ -1,10 +1,20 @@
 ---
 - name: Converge
   hosts: all
+  pre_tasks:
+    - include_role:
+        name: "ansible-role-baseline"
+        tasks_from: pre-tasks.yaml
+
+    # Override the Alpine Diskless Mode fact since the docker container will
+    # not show a mount point for '/'
+    - when: ansible_facts['os_family']|lower == 'alpine'
+      set_fact:
+        alpine_diskless: false
   tasks:
     - name: "Include baseline"
       include_role:
-        name: "baseline"
+        name: "ansible-role-baseline"
   vars:
     asset_name: molecule-container
     asset_tag: c:molecule:01

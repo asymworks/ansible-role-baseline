@@ -24,6 +24,7 @@
       - msmtp-mta
       - restic
       - ntp
+      - ufw
       - vim
     update_cache: true
 

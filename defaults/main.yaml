@@ -61,6 +61,7 @@ ufw_policy: deny
 msmtp_installed: true
 msmtp_accounts:
   - name: default
+    sender: username@gmail.com
     host: smtp.gmail.com
     port: 587
     tls: true

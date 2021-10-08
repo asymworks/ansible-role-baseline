@@ -4,8 +4,8 @@
 - name: Asymworks Baseline | Restart sshd
   service: name=sshd state=restarted
 
-- name: Asymworks Baseline (Alpine) | Restart ntpd
-  service: name=ntpd state=restarted
+- name: Asymworks Baseline (Alpine) | Restart chrony
+  service: name=chronyd state=restarted
 
 - name: Asymworks Baseline (Debian) | Restart ntpd
   service: name=ntp state=restarted
@@ -21,9 +21,9 @@
   failed_when: ret.stderr != ''
 
 - name: Asymworks Baseline | Restart rsyslog
-  when: rsyslog_installed and rsyslog_enabled
+  when: rsyslog_enabled
   service: name=rsyslog state=restarted
 
 - name: Asymworks Baseline | Restart Agent
-  when: telegraf_installed and telegraf_enabled
+  when: telegraf_enabled
   service: name=telegraf state=restarted

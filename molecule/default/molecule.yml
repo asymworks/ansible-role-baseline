@@ -5,19 +5,50 @@ driver:
   name: docker
 platforms:
   - name: debian9
-    image: geerlingguy/docker-debian9-ansible
-    pre_build_image: true
+    image: debian:9
+    dockerfile: Dockerfile.j2
+    pre_build_image: false
+    tmpfs:
+      - /run
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
     privileged: true
-    capabilities:
-      - SYS_ADMIN
-    command: "/lib/systemd/systemd"
+    security_opts:
+      - seccomp=unconfined
+    command: /lib/systemd/systemd
+
   - name: debian10
-    image: geerlingguy/docker-debian10-ansible
-    pre_build_image: true
+    image: debian:10
+    dockerfile: Dockerfile.j2
+    pre_build_image: false
+    tmpfs:
+      - /run
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
     privileged: true
-    capabilities:
-      - SYS_ADMIN
-    command: "/sbin/init"
+    security_opts:
+      - seccomp=unconfined
+    command: /lib/systemd/systemd
+
+  - name: alpine313
+    image: alpine:3.13
+    dockerfile: Dockerfile.j2
+    pre_build_image: false
+    privileged: true
+    security_opts:
+      - seccomp=unconfined
+    command: /sbin/init
+
+  - name: alpine314
+    image: alpine:3.14
+    dockerfile: Dockerfile.j2
+    pre_build_image: false
+    privileged: true
+    security_opts:
+      - seccomp=unconfined
+    command: /sbin/init
 provisioner:
   name: ansible
 verifier:
