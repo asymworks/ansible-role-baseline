@@ -1,0 +1,29 @@
+---
+# Handlers for asymworks.baseline
+
+- name: Asymworks Baseline | Restart sshd
+  service: name=sshd state=restarted
+
+- name: Asymworks Baseline (Alpine) | Restart ntpd
+  service: name=ntpd state=restarted
+
+- name: Asymworks Baseline (Debian) | Restart ntpd
+  service: name=ntp state=restarted
+
+- name: Asymworks Baseline | Restart Networking
+  service: name=networking state=restarted
+
+- name: Asymworks Baseline (Alpine) | Update LBU
+  command:
+    cmd: lbu ci
+  when: alpine_diskless
+  become: true
+  failed_when: ret.stderr != ''
+
+- name: Asymworks Baseline | Restart rsyslog
+  when: rsyslog_installed and rsyslog_enabled
+  service: name=rsyslog state=restarted
+
+- name: Asymworks Baseline | Restart Agent
+  when: telegraf_installed and telegraf_enabled
+  service: name=telegraf state=restarted

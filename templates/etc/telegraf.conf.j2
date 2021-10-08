@@ -1,0 +1,47 @@
+# KraussNet Telegraf Agent Configuration File
+# -------------------------------------------
+#
+# Additional files are loaded from /etc/telegraf.conf.d
+#
+# This file is configured by Ansible
+
+# Global Tags for this server
+[global_tags]
+{% for tag, value in telegraf_global_tags %}
+    {{ tag }} = "{{ value }}"
+{% endfor %}
+
+# Telegraf Agent Configuration
+[agent]
+    interval = "{{ telegraf_collection_interval }}"
+    round_interval = true
+    collection_jitter = "{{ telegraf_collection_jitter }}"
+    flush_interval = "{{ telegraf_flush_interval }}"
+    flush_jitter = "{{ telegraf_flush_jitter }}"
+    logtarget = "stderr"
+
+    ## Override default hostname, if empty use os.Hostname()
+    hostname = "{{ telegraf_hostname }}"
+    omit_hostname = false
+
+{% if telegraf_influx_enabled %}
+# InfluxDB Output Configuration
+[[outputs.influxdb]]
+    urls = ["{{ telegraf_influx_server }}:{{ telegraf_influx_port }}"]
+    database = "{{ telegraf_influx_database }}"
+    skip_database_creation = false
+    retention_policy = "{{ telegraf_influx_retention_policy }}"
+{% if telegraf_influx_username %}
+    username = "{{ telegraf_influx_username }}"
+    password = "{{ telegraf_influx_password }}"
+{% endif %}
+{% endif %}
+
+{% if telegraf_influx_v2_enabled %}
+# InfluxDB v2 Output Configuration
+[[outputs.influxdb_v2]]
+    urls = ["{{ telegraf_influx_v2_server }}:{{ telegraf_influx_v2_port }}"]
+    token = "{{ telegraf_influx_v2_token }}"
+    organization = "{{ telegraf_influx_v2_organization }}"
+    bucket = "{{ telegraf_influx_v2_bucket }}"
+{% endif %}

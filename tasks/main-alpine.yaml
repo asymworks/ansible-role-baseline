@@ -1,0 +1,97 @@
+---
+# Alpine-Specific Tasks for asymworks.baseline
+
+# Check Alpine Version >= 3.13 (Asymworks Package Repo Limitation)
+- name: Asymworks Baseline (Alpine) | Check Alpine Version
+  when: ansible_distribution_version is version('3.13', '<')
+  fail: msg='Unsupported Alpine Version {{ ansible_distribution_version }} - Please Upgrade to 3.13 or later'
+
+# Enable Community Repository
+- name: Asymworks Baseline (Alpine) | Enable Community Repository
+  ansible.builtin.lineinfile:
+    path: /etc/apk/repositories
+    regex: '(http.*?)/v{{ alpine_repo_ver }}/community$'
+    line: '\1/v{{ alpine_repo_ver }}/community'
+    state: present
+    backrefs: true
+
+# Enable Asymworks Repository
+- name: Asymworks Baseline (Alpine) | Enable Asymworks Repository
+  ansible.builtin.lineinfile:
+    path: /etc/apk/repositories
+    line: "https://pkgs.asymworks.net/alpine/v{{ alpine_repo_ver }}/main"
+
+- name: Asymworks Baseline (Alpine) | Install Asymworks Package Key
+  ansible.builtin.copy:
+    src: etc/apk/keys/packages@asymworks.com-5ff0a833.rsa.pub
+    dest: /etc/apk/keys/packages@asymworks.com-5ff0a833.rsa.pub
+    mode: 0644
+
+# Install Basic Packages
+- name: Asymworks Baseline (Alpine) | Install Core Packages
+  community.general.apk:
+    update_cache: true
+    state: present
+    name:
+      - curl
+      - msmtp
+      - restic
+      - rsyslog
+      - telegraf
+      - ufw
+      - vim
+
+# Populate /etc/timezone
+- name: Asymworks Baseline (Alpine) | Populate /etc/timezone
+  ansible.builtin.copy:
+    content: "{{ timezone }}"
+    dest: /etc/timezone
+    owner: root
+    group: root
+    mode: '0644'
+
+# Setup NTP Server
+- name: Asymworks Baseline (Alpine) | Set Network Time Server
+  ansible.builtin.lineinfile:
+    path: /etc/conf.d/ntpd
+    regex: '^NTPD_OPTS='
+    line: 'NTPD_OPTS="-N -p {{ ntp_server }}"'
+    state: present
+  notify:
+    - Common (Alpine) | Restart ntpd
+
+- name: Asymworks Baseline (Alpine) | Start Network Time Service
+  ansible.builtin.service:
+    name: ntpd
+    enabled: true
+    state: started
+
+# Persist /etc/init.d Updates
+- name: Asymworks Baseline (Alpine) | Persist /etc/init.d
+  ansible.builtin.command:
+    cmd: lbu inc /etc/init.d
+  when: alpine_diskless or alpine_diskmode
+  become: true
+  failed_when: ret.stderr != ''
+
+# Setup mSMTP MTA (symlink for sendmail)
+- name: Asymworks Baseline (Alpine) | Install msmtp
+  when: msmtp_installed
+  ansible.builin.block:
+    - name: Asymworks Baseline (Alpine / msmtp MTA) | Setup MTA Link
+      ansible.builtin.file:
+        path: /usr/sbin/sendmail
+        src: /usr/bin/msmtp
+        state: link
+
+    - name: Asymworks Baseline (Alpine / msmtp MTA) | Persist MTA Link
+      ansible.builtin.copy:
+        src: etc/local.d/98-relink-sendmail.start
+        dest: /etc/local.d/98-relink-sendmail.start
+        mode: 0755
+
+    - name: Asymworks Baseline (Alpine / msmtp MTA) | Enable Local Service
+      ansible.builtin.service:
+        name: local
+        enabled: true
+        state: started

@@ -1,0 +1,135 @@
+---
+# Main Entry Point for asymworks.baseline
+
+# Ensure Asset information is provided
+- name: Asymworks Baseline | Check Asset Name
+  fail: msg="The variable 'asset_name' is not set or is empty"
+  when: (asset_name is not defined) or (asset_name|length == 0)
+
+- name: Asymworks Baseline | Check Asset Tag
+  fail: msg="The variable 'asset_tag' is not set or is empty"
+  when: (asset_tag is not defined) or (asset_tag|length == 0)
+
+# Run Distribution-Specific Setup Tasks
+- import_tasks: main-alpine.yaml
+  when: ansible_facts['os_family']|lower == 'alpine'
+
+- import_tasks: main-debian.yaml
+  when: ansible_facts['os_family']|lower == 'debian'
+
+# Disable Root SSH Logins
+- name: Asymworks Baseline | Disable SSH Root Login
+  ansible.builtin.lineinfile: dest=/etc/ssh/sshd_config state=present regexp='^PermitRootLogin ' line='PermitRootLogin no'
+  notify: Asymworks Baseline | Restart sshd
+
+# Disable SSH Password Logins
+- name: Asymworks Baseline | Disable SSH Password Login
+  ansible.builtin.lineinfile: dest=/etc/ssh/sshd_config state=present regexp='^PasswordAuthentication ' line='PasswordAuthentication no'
+  notify: Asymworks Baseline | Restart sshd
+
+# Disable WiFi Power Management
+- name: Asymworks Baseline | Disable WiFi Power Management
+  when: ansible_facts['wlan0'] is defined and ansible_facts['wlan0']['active']
+  ansible.builtin.lineinfile:
+    path: '/etc/network/interfaces'
+    line: "\tpost-up iwconfig wlan0 power off"  # noqa: no-tabs
+    insertafter: "^iface wlan0 inet"
+  notify: Asymworks Baseline | Restart Networking
+
+# Install a Custom MOTD File
+- name: Asymworks Baseline | Setup MOTD
+  ansible.builtin.template:
+    src: etc/motd.j2
+    dest: /etc/motd
+    owner: root
+    group: root
+    mode: 0644
+
+# Process sysctl Tweaks
+- name: Asymworks Baseline | Process sysctl.conf Tweaks
+  ansible.builtin.sysctl:
+    name: '{{ item.key }}'
+    value: '{{ item.value }}'
+    state: present
+    reload: true
+    sysctl_file: /etc/sysctl.d/80-ansible.conf
+  with_dict: '{{ sysctl_config }}'
+
+# Setup Firewall
+- name: Asymworks Baseline | Enable Firewall
+  community.general.ufw:
+    state: "{{ 'enabled' if ufw_enabled else 'disabled' }}"
+    policy: "{{ ufw_policy | default('deny') }}"
+    logging: "{{ ufw_logging | default('off') }}"
+
+# Allow OpenSSH. (Note that as ufw manages its own state, simply removing
+# a rule=allow task can leave those ports exposed. Either use delete=yes
+# or a separate state=reset task)
+- name: Asymworks Baseline | Allow SSH Connections
+  community.general.ufw:
+    rule: allow
+    name: SSH
+
+# Setup Remote Logging
+- name: Asymworks Baseline | Create /etc/rsyslog.d
+  ansible.builtin.file:
+    path: /etc/rsyslog.d
+    state: directory
+    mode: '0755'
+
+- name: Asymworks Baseline | Copy Remote Syslog Configuration
+  ansible.builtin.template:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    mode: '0644'
+  with_items:
+    - src: etc/rsyslog.conf.j2
+      dest: /etc/rsyslog.conf
+    - src: etc/rsyslog.d/10-remote.conf.j2
+      dest: /etc/rsyslog.d/10-remote.conf
+    - src: etc/rsyslog.d/11-local.conf.j2
+      dest: /etc/rsyslog.d/11-local.conf
+  notify:
+    - Asymworks Baseline | Restart rsyslog
+
+- name: Asymworks Baseline | Start Remote Syslog Service
+  ansible.builtin.service:
+    name: rsyslog
+    enabled: "{{ rsyslog_enabled }}"
+    state: "{{ 'started' if rsyslog_enabled else 'stopped' }}"
+
+# Setup Telegraf Metrics Agent
+- name: Asymworks Baseline | Copy Telegraf Agent Configuration
+  when: telegraf_enabled
+  ansible.builtin.template:
+    src: etc/telegraf.conf.j2
+    dest: "{{ telegraf_conf_path }}/telegraf.conf"
+    mode: '0644'
+  notify: Asymworks Baseline | Restart Agent
+
+- name: Asymworks Baseline | Copy Telegraf Plugin Configuration
+  when: telegraf_enabled
+  ansible.builtin.copy:
+    src: "etc/telegraf.conf.d/{{ item }}"
+    dest: "{{ telegraf_conf_d_path }}/{{ item }}"
+    mode: '0644'
+  with_list:
+    - '10-defaults.conf'
+  notify: Asymworks Baseline | Restart Agent
+
+- name: Asymworks Baseline | Start Telegraf Agent
+  when: telegraf_enabled
+  ansible.builtin.service:
+    name: telegraf
+    enabled: "{{ telegraf_enabled }}"
+    state: "{{ 'started' if telegraf_enabled else 'stopped' }}"
+
+# Setup mSMTP
+- name: Asymworks Baseline | Copy mSMTP Configuration
+  when: msmtp_installed
+  ansible.builtin.template:
+    src: etc/msmtprc.j2
+    dest: /etc/msmtprc
+    owner: root
+    group: root
+    mode: 0644

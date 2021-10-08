@@ -1,0 +1,75 @@
+---
+# Debian-Specific Tasks for kraussnet.common
+
+# Ensure Debian version is at least 9
+- name: Asymworks Baseline (Debian) | Check Version
+  when: ansible_distribution_version is version('9', '<')
+  fail: msg='Unsupported Debian Version {{ ansible_distribution_version }} - Please Upgrade to Stretch or later'
+
+# Install Stretch Backports
+- name: Asymworks Baseline (Debian) | Install Backports Repository
+  when: rsyslog_enabled and ansible_distribution_version is version('10', '<')
+  ansible.builtin.apt_repository:
+    repo: "deb http://deb.debian.org/debian stretch-backports main"
+    state: present
+
+# Install Basic Packages
+- name: Asymworks Baseline (Debian) | Install Core Packages
+  ansible.builtin.apt:
+    name:
+      - apt-transport-https
+      - curl
+      - gnupg
+      - msmtp
+      - msmtp-mta
+      - restic
+      - rsyslog
+      - telegraf
+      - ntp
+      - vim
+    update_cache: true
+
+# Install Rsyslog Package
+- name: Asymworks Baseline (Debian) | Install Rsyslog Package
+  when: rsyslog_enabled
+  ansible.builtin.apt:
+    name: rsyslog
+    state: latest
+    default_release: "{{ 'stretch-backports' when ansible_distribution_version is version('10', '<') else 'main' }}"
+
+# Populate /etc/timezone
+- name: Asymworks Baseline (Debian) | Populate /etc/timezone
+  ansible.builtin.template:
+    src: etc/timezone.j2
+    dest: /etc/timezone
+    owner: root
+    group: root
+    mode: '0644'
+
+# Set System Timezone
+- name: Asymworks Baseline (Debian) | Set Timezone
+  community.general.timezone:
+    name: "{{ etc_timezone }}"
+
+# Setup NTP Server
+- name: Asymworks Baseline (Debian) | Reset Network Time Servers
+  ansible.builtin.lineinfile:
+    path: /etc/ntp.conf
+    search_string: 'pool.ntp.org'
+    state: absent
+  notify:
+    - Asymworks Baseline (Debian) | Restart ntpd
+
+- name: Asymworks Baseline (Debian) | Set Network Time Server
+  ansible.builtin.lineinfile:
+    path: /etc/ntp.conf
+    regex: "^server "
+    line: "server {{ ntp_server }}"
+  notify:
+    - Asymworks Baseline (Debian) | Restart ntpd
+
+- name: Asymworks Baseline (Debian) | Start Network Time Service
+  ansible.builtin.service:
+    name: ntp
+    enabled: true
+    state: started

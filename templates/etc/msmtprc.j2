@@ -1,0 +1,24 @@
+# mSMTP Configuration
+# Managed by Ansible
+
+defaults
+auth off
+tls off
+
+{% for account in msmtp_accounts %}
+account {{ account['name']|default('default') }}
+host {{ account['host'] }}
+port {{ account['port'] }}
+from {{ account['sender'] }}
+{% if account['tls']|default(false) %}
+tls on
+{% endif %}
+{% if account['auth']|default(false) %}
+auth on
+user {{ account['username'] }}
+password {{ account['password'] }}
+{% endif %}
+
+{% endfor %}
+
+account default : {{ msmtp_default_account|default('default') }}

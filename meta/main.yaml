@@ -1,0 +1,12 @@
+---
+# Role Information for asymworks.baseline
+
+dependencies: []
+
+galaxy_info:
+  role_name: baseline
+  author: asymworks
+  description: Asymworks Linux Baseline Configuration.
+  company: "Asymworks, LLC"
+  license: "license (BSD, MIT)"
+  min_ansible_version: 2.4

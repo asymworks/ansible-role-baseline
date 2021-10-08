@@ -1,0 +1,7 @@
+# Relink /usr/sbin/sendmail to point to /usr/bin/msmtp
+# This file is managed by Ansible
+
+if [[ -L "/usr/sbin/sendmail" ]]; then
+    rm /usr/sbin/sendmail
+    ln -s /usr/bin/msmtp /usr/sbin/sendmail
+fi
