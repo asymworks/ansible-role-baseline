@@ -59,12 +59,10 @@
     enabled: false
 
 # Setup NTP Server
-- name: Asymworks Baseline (Alpine) | Set Network Time Server
-  ansible.builtin.lineinfile:
-    path: /etc/chrony/chrony.conf
-    regex: '^pool'
-    line: 'pool {{ ntp_server }} prefer iburst'
-    state: present
+- name: Asymworks Baseline (Alpine) | Configure Network Time Server
+  ansible.builtin.template:
+    src: etc/chrony/chrony.conf.j2
+    dest: /etc/chrony/chrony.conf
   notify:
     - Asymworks Baseline (Alpine) | Restart chrony
 
@@ -76,6 +74,13 @@
     group: chrony
     mode: '0750'
 
+- name: Asymworks Baseline (Alpine) | DEBUG -- Use Temp PIDFILE for chrony
+  when: lookup('env', 'MOLECULE_DEBUG')|bool|default(False)
+  ansible.builtin.lineinfile:
+    path: /etc/chrony/chrony.conf
+    line: pidfile /tmp/chrony.pid
+    state: present
+
 - name: Asymworks Baseline (Alpine) | DEBUG -- Dump chrony Config
   when: lookup('env', 'MOLECULE_DEBUG')|bool|default(False)
   ansible.builtin.command:
@@ -84,7 +89,7 @@
 - name: Asymworks Baseline (Alpine) | DEBUG -- Manually Check chrony
   when: lookup('env', 'MOLECULE_DEBUG')|bool|default(False)
   ansible.builtin.command:
-    cmd: chronyd -u chrony -d -t 10
+    cmd: chronyd -u chrony -d -x -t 10
 
 - name: Asymworks Baseline (Alpine) | Start Network Time Service
   ansible.builtin.service:
