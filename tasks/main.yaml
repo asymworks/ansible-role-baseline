@@ -55,6 +55,27 @@
     sysctl_file: /etc/sysctl.d/80-ansible.conf
   with_dict: '{{ sysctl_config }}'
 
+# Disable Firewall IPv6
+- name: Asymworks Baseline | Check IPv6 Kernel Module
+  ansible.builtin.command:
+    cmd: grep ip6_tables /proc/modules
+  register: ret
+  changed_when: false
+  failed_when: ret.rc != 0 and ret.rc != 1
+
+- name: Asymworks Baseline | Disable IPv6 Firewall
+  ansible.builtin.lineinfile:
+    dest: /etc/ufw/ufw.conf
+    regexp: '^IPV6'
+    line: "IPV6={{ 'no' if ret.rc == 1 else 'yes' }}"
+    state: present
+  register: ret
+
+- name: Asymworks Baseline | Reload Firewall
+  when: ret.changed and ufw_enabled
+  community.general.ufw:
+    state: reloaded
+
 # Setup Firewall
 - name: Asymworks Baseline | Enable Firewall
   community.general.ufw:
