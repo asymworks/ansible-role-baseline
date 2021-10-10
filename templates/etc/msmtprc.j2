@@ -21,6 +21,6 @@ password {{ account['password'] }}
 
 {% endfor %}
 
-{% if (msmtp_accounts and msmtp_accounts[0]['name'] != 'default') or msmtp_default_account != 'default' %}
+{% if not msmtp_accounts|selectattr('name', 'eq', 'default') or msmtp_default_account != 'default' %}
 account default : {{ msmtp_default_account if msmtp_default_account != 'default' else msmtp_accounts[0]['name'] }}
 {% endif %}
