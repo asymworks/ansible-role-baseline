@@ -21,4 +21,4 @@ password {{ account['password'] }}
 
 {% endfor %}
 
-account default : {{ msmtp_default_account|default('default') }}
+account default : {{ msmtp_default_account|default(msmtp_accounts[0]['name']) }}
