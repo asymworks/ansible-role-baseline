@@ -13,4 +13,5 @@
     cmd: lbu ci
   when: alpine_diskless
   become: true
+  register: ret
   failed_when: ret.stderr != ''
