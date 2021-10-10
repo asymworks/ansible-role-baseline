@@ -27,6 +27,6 @@
       {{
         not (ansible_mounts 
           | selectattr('mount', 'eq', '/')
-          | count | bool
+          | count | bool | to_yaml
         )
       }}
