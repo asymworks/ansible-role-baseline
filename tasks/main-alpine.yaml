@@ -98,6 +98,7 @@
     cmd: lbu inc /etc/init.d
   when: alpine_diskless
   become: true
+  register: ret
   failed_when: ret.stderr != ''
 
 # Setup mSMTP MTA (symlink for sendmail)
