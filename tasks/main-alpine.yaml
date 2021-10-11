@@ -103,7 +103,7 @@
 
 # Setup mSMTP MTA (symlink for sendmail)
 - name: Asymworks Baseline (Alpine) | Install msmtp
-  when: msmtp_installed
+  when: msmtp_enabled
   block:
     - name: Asymworks Baseline (Alpine / msmtp MTA) | Setup MTA Link
       ansible.builtin.file:
