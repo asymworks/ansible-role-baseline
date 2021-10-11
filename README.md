@@ -111,7 +111,7 @@ telegraf_conf_d_path: >-
 Override these variables to control where the Telegraf agent dynamic configuration files are stored.  By default the general configuration is stored in `/etc/telegraf.conf` and plugin configurations go in `/etc/telegraf.conf.d` on Alpine or `/etc/telegraf/telegraf.d` on Debian.
 
 ```yaml
-msmtp_installed: true
+msmtp_enabled: true
 msmtp_accounts:
   - name: default
     host: smtp.gmail.com
@@ -124,7 +124,7 @@ msmtp_accounts:
 msmtp_default_account: default
 ```
 
-Whether the `msmtp` mail transfer agent is installed, and the account settings to use for it.  Multiple accounts can be defined here using a YAML list with the options shown.  The `tls` and `auth` options may be omitted, and both default to `false`.  When no account is specified for the `msmtp` command, the account used is set by the `msmtp_default_account` variable.
+Whether the `msmtp` mail transfer agent is enabled, and the account settings to use for it.  Multiple accounts can be defined here using a YAML list with the options shown.  The `tls` and `auth` options may be omitted, and both default to `false`.  When no account is specified for the `msmtp` command, the account used is set by the `msmtp_default_account` variable.
 
 ## Role Facts
 

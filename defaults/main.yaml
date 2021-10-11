@@ -58,7 +58,7 @@ ufw_logging: false
 ufw_policy: deny
 
 # mSMTP Setup
-msmtp_installed: true
+msmtp_enabled: true
 msmtp_accounts:
   - name: default
     sender: username@gmail.com
