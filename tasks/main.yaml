@@ -148,7 +148,7 @@
 
 # Setup mSMTP
 - name: Asymworks Baseline | Copy mSMTP Configuration
-  when: msmtp_installed
+  when: msmtp_enabled
   ansible.builtin.template:
     src: etc/msmtprc.j2
     dest: /etc/msmtprc
