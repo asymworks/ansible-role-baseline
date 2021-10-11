@@ -60,7 +60,7 @@
   ansible.builtin.command:
     cmd: grep ip6_tables /proc/modules
   register: ret
-  check_mode: true
+  check_mode: false
   changed_when: false
   failed_when: ret.rc != 0 and ret.rc != 1
 
