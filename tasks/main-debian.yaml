@@ -23,8 +23,9 @@
       - msmtp
       - msmtp-mta
       - nfs-common
-      - restic
       - ntp
+      - restic
+      - sqlite3
       - ufw
       - vim
     update_cache: true
