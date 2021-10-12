@@ -155,3 +155,26 @@
     owner: root
     group: root
     mode: 0644
+
+# Setup NFSv4
+- name: Asymworks Baseline | Setup NFSv4 ID Mapper
+  community.general.ini_file:
+    path: /etc/idmapd.conf
+    section: General
+    option: Domain
+    value: "{{ nfsv4_idmap_domain }}"
+    mode: '0644'
+  notify: Asymworks Baseline | Restart NFSv4 ID Mapper
+
+- name: Asymworks Baseline | Mount NFS Shares at Boot
+  when: ansible_facts['os_family']|lower == 'alpine'
+  ansible.builtin.service:
+    name: nfsmount
+    enabled: "{{ nfs_automount }}"
+    state: "{{ 'started' if nfs_automount else 'stopped' }}"
+
+- name: Asymworks Baseline | Enable NFSv4 ID Mapper
+  ansible.builtin.service:
+    name: "{{ nfsv4_idmap_service }}"
+    enabled: "{{ nfsv4_enabled }}"
+    state: "{{ 'started' if nfsv4_enabled else 'stopped' }}"

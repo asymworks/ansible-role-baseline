@@ -22,6 +22,7 @@
       - gnupg
       - msmtp
       - msmtp-mta
+      - nfs-common
       - restic
       - ntp
       - ufw

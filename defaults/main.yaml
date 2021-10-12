@@ -71,3 +71,15 @@ msmtp_accounts:
 
 # mSMTP Default Sender Account
 msmtp_default_account: default
+
+# NFS Setup
+nfsv4_enabled: false
+nfsv4_idmap_domain: "{{ ansible_domain }}"
+nfsv4_idmap_service: >-
+  {{
+    'rpc.idmapd'
+      if ansible_facts['os_family']|lower == 'alpine'
+      else 'nfs-idmapd' 
+  }}
+
+nfs_automount: true

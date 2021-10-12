@@ -8,10 +8,11 @@ An Ansible Role that installs common files and utilities on Asymworks servers ru
 - Applies tweaks to `sysctl`
 - Installs the `restic` backup agent
 - Installs and starts the `ntpd` service with a configurable NTP server
-- Optionally installs and configures `rsyslog` to send system logs to the central logging server
-- Optionally installs and configures `telegraf` to send system metrics to the central metrics server
-- Optionally installs and configures `ufw` and opens the SSH port
-- Optionally installs and configures `msmtp` to send email messages
+- Installs and optionally enables `rsyslog` to send system logs to the central logging server
+- Installs and optionally enables `telegraf` to send system metrics to the central metrics server
+- Installs and optionally enables `ufw` and opens the SSH port
+- Installs and optionally enables `msmtp` to send email messages
+- Installs and optionally enables NFSv4 file sharing with ID mapping (`sec=sys` mode)
 
 ## Requirements
 
@@ -125,6 +126,21 @@ msmtp_default_account: default
 ```
 
 Whether the `msmtp` mail transfer agent is enabled, and the account settings to use for it.  Multiple accounts can be defined here using a YAML list with the options shown.  The `tls` and `auth` options may be omitted, and both default to `false`.  When no account is specified for the `msmtp` command, the account used is set by the `msmtp_default_account` variable.
+
+```yaml
+nfsv4_enabled: false
+nfsv4_idmap_domain: "{{ ansible_domain }}"
+nfsv4_idmap_service: >
+  {{
+    'rpc.idmapd'
+      if ansible_facts['os_family']|lower == 'alpine'
+      else 'nfs-idmapd' 
+  }}
+
+nfs_automount: true
+```
+
+Configures NFSv4 ID mapping and optionally enables automatic mount of NFS volumes at boot (Alpine Linux only).
 
 ## Role Facts
 

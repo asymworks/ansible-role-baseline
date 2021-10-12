@@ -36,6 +36,7 @@
       - chrony
       - curl
       - msmtp
+      - nfs-utils
       - restic
       - rsyslog
       - telegraf
