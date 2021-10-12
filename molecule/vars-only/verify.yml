@@ -1,0 +1,17 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Check for updated MOTD file
+      ansible.builtin.command:
+        cmd: grep "c:molecule:01" /etc/motd
+      register: ret
+      failed_when: false
+      changed_when: false
+
+    - name: Check that MOTD is not updated
+      assert:
+        that: ret.stdout == ''
