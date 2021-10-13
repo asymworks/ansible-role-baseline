@@ -39,7 +39,7 @@
       - nfs-utils
       - restic
       - rsyslog
-      - sqlite3
+      - sqlite
       - telegraf
       - ufw
       - vim
