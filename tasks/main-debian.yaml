@@ -24,6 +24,8 @@
       - msmtp-mta
       - nfs-common
       - ntp
+      - python3-bcrypt
+      - python3-passlib
       - restic
       - sqlite3
       - ufw
