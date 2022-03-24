@@ -10,48 +10,6 @@ sysctl_config: {}
 # Default NTP Server
 ntp_server: time.nist.gov
 
-# Rsyslog Setup
-rsyslog_enabled: true
-rsyslog_server: logs.lan
-rsyslog_port: 10514
-
-# Telegraf Setup (see also telegraf.yaml)
-telegraf_enabled: true
-telegraf_global_tags: {}
-telegraf_hostname: "{{ ansible_fqdn }}"
-
-# Telegraf Agent Configuration
-telegraf_collection_interval: "10s"
-telegraf_collection_jitter: "0s"
-telegraf_flush_interval: "10s"
-telegraf_flush_jitter: "5s"
-
-# Default Remote InfluxDB (v1) Server
-telegraf_influx_enabled: false
-telegraf_influx_server: http://metrics.lan
-telegraf_influx_port: 8086
-telegraf_influx_database: telegraf
-telegraf_influx_retention_policy: ''
-telegraf_influx_username: ''
-telegraf_influx_password: ''
-
-# Default Remote InfluxDB v2 Server
-telegraf_influx_v2_enabled: true
-telegraf_influx_v2_server: http://metrics.lan
-telegraf_influx_v2_port: 8086
-telegraf_influx_v2_bucket: metrics
-telegraf_influx_v2_organization: kraussnet
-telegraf_influx_v2_token: influxdb-v2-api-token
-
-# Telegraf Configuration Paths
-telegraf_conf_path: /etc
-telegraf_conf_d_path: >-
-  {{
-    '/etc/telegraf.conf.d'
-      if ansible_facts['os_family']|lower == 'alpine'
-      else '/etc/telegraf/telegraf.d'
-  }}
-
 # Firewall Setup
 ufw_enabled: true
 ufw_logging: false

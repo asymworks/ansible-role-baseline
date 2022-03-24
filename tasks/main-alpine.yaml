@@ -38,9 +38,7 @@
       - msmtp
       - nfs-utils
       - restic
-      - rsyslog
       - sqlite
-      - telegraf
       - ufw
       - vim
 

@@ -6,13 +6,6 @@
   when: ansible_distribution_version is version('9', '<')
   fail: msg='Unsupported Debian Version {{ ansible_distribution_version }} - Please Upgrade to Stretch or later'
 
-# Install Stretch Backports
-- name: Asymworks Baseline (Debian) | Install Backports Repository
-  when: rsyslog_enabled and ansible_distribution_version is version('10', '<')
-  ansible.builtin.apt_repository:
-    repo: "deb http://deb.debian.org/debian stretch-backports main"
-    state: present
-
 # Install Basic Packages
 - name: Asymworks Baseline (Debian) | Install Core Packages
   ansible.builtin.apt:
@@ -31,32 +24,6 @@
       - ufw
       - vim
     update_cache: true
-
-# Install Influx Data Repository
-- name: Asymworks Baseline (Debian) | Install Influx Data Package Key
-  ansible.builtin.apt_key:
-    url: https://repos.influxdata.com/influxdb.key
-    state: present
-
-- name: Asymworks Baseline (Debian) | Install Influx Data Repository
-  ansible.builtin.apt_repository:
-    repo: "deb https://repos.influxdata.com/debian {{ ansible_distribution_release }} stable"
-    state: present
-
-# Install Basic Packages
-- name: Asymworks Baseline (Debian) | Install Telegraf Packages
-  ansible.builtin.apt:
-    name: telegraf
-    state: present
-    update_cache: true
-
-# Install Rsyslog Package
-- name: Asymworks Baseline (Debian) | Install Rsyslog Package
-  when: rsyslog_enabled
-  ansible.builtin.apt:
-    name: rsyslog
-    state: present
-    default_release: "{{ 'stretch-backports' if ansible_distribution_version is version('10', '<') else None }}"
 
 # Set System Timezone
 - name: Asymworks Baseline (Debian) | Set Timezone

@@ -8,8 +8,6 @@ An Ansible Role that installs common files and utilities on Asymworks servers ru
 - Applies tweaks to `sysctl`
 - Installs the `restic` backup agent
 - Installs and starts the `ntpd` service with a configurable NTP server
-- Installs and optionally enables `rsyslog` to send system logs to the central logging server
-- Installs and optionally enables `telegraf` to send system metrics to the central metrics server
 - Installs and optionally enables `ufw` and opens the SSH port
 - Installs and optionally enables `msmtp` to send email messages
 - Installs and optionally enables NFSv4 file sharing with ID mapping (`sec=sys` mode)
@@ -54,62 +52,6 @@ ufw_policy: deny
 ```
 
 Whether the UFW firewall is enabled, and if logging is enabled (via the `LOG_KERN` facility). The `ufw_policy` sets the default policy for the firewall when no specific rules apply.
-
-```yaml
-rsyslog_enabled: true
-syslog_server: logs.lan
-syslog_port: 10514
-```
-
-Whether the remote `syslog` server is enabled and installe.  If enabled, logs are sent in RFC3164 format via UDP to the specified server and port so they can be parsed by e.g. Logstash or Graylog.
-
-```yaml
-telegraf_enabled: true
-telegraf_global_tags: {}
-telegraf_hostname: "{{ ansible_fqdn }}"
-telegraf_collection_interval: "10s"
-telegraf_collection_jitter: "0s"
-telegraf_flush_interval: "10s"
-telegraf_flush_jitter: "5s"
-```
-
-Whether the Telegraf agent is installed and enabled, global settings, and global tags to include with each metric.
-
-```yaml
-telegraf_influx_enabled: false
-telegraf_influx_server: http://metrics.lan
-telegraf_influx_port: 8086
-telegraf_influx_database: telegraf
-telegraf_influx_retention_policy: ''
-telegraf_influx_username: ''
-telegraf_influx_password: ''
-```
-
-Remote InfluxDB 1.x configuration, used for the output plugin.  By default, only InfluxDB 2.0 is used.
-
-```yaml
-telegraf_influx_v2_enabled: true
-telegraf_influx_v2_server: http://metrics.lan
-telegraf_influx_v2_port: 8086
-telegraf_influx_v2_bucket: metrics
-telegraf_influx_v2_organization: kraussnet
-telegraf_influx_v2_token: influxdb-v2-api-token
-```
-
-Remote InfluxDB 1.x configuration.  The API token must grant write access to the specified organization and bucket.
-
-```yaml
-telegraf_conf_path: /etc
-telegraf_conf_d_path: >-
-  {{
-    '/etc/telegraf.conf.d'
-      if ansible_facts['os_family']|lower == 'alpine'
-      else '/etc/telegraf/telegraf.d'
-  }}
-
-```
-
-Override these variables to control where the Telegraf agent dynamic configuration files are stored.  By default the general configuration is stored in `/etc/telegraf.conf` and plugin configurations go in `/etc/telegraf.conf.d` on Alpine or `/etc/telegraf/telegraf.d` on Debian.
 
 ```yaml
 msmtp_enabled: true

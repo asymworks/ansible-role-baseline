@@ -22,14 +22,6 @@
   become: true
   failed_when: ret.stderr != ''
 
-- name: Asymworks Baseline | Restart rsyslog
-  when: rsyslog_enabled
-  service: name=rsyslog state=restarted
-
-- name: Asymworks Baseline | Restart Agent
-  when: telegraf_enabled
-  service: name=telegraf state=restarted
-
 - name: Asymworks Baseline | Restart NFSv4 ID Mapper
   when: nfsv4_enabled
   ansible.builtin.service:
