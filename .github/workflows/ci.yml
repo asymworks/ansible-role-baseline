@@ -49,10 +49,19 @@ jobs:
           - image: alpine:3.14
             command: /sbin/init
 
+          - image: alpine:3.15
+            command: /sbin/init
+
           - image: debian:9
             command: /lib/systemd/systemd
 
           - image: debian:10
+            command: /lib/systemd/systemd
+
+          - image: ubuntu:20.04
+            command: /lib/systemd/systemd
+
+          - image: ubuntu:21.10
             command: /lib/systemd/systemd
 
     steps:

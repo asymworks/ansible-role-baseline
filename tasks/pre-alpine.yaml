@@ -4,7 +4,7 @@
 
 # Lookup Repository Version (i.e. MAJOR.minor version) as alpine_repo_version
 - name: Asymworks Baseline Pre-Task (Alpine) | Register Alpine Version
-  set_fact: alpine_repo_ver="{{ (ansible_distribution_version|split('.'))[0:2]|join('.') }}"
+  ansible.builtin.set_fact: alpine_repo_ver="{{ (ansible_distribution_version|split('.'))[0:2]|join('.') }}"
 
 # Determine whether the Alpine installation was installed as Diskless or Disk
 # Mode (will later tell us whether to invoke LBU). This will create three new
@@ -13,7 +13,7 @@
 # - alpine_diskless: If the installation is Diskless (fully from RAM)
 
 - name: Asymworks Baseline Pre-Task (Alpine) | Register Mountpoint for SD Card
-  set_fact:
+  ansible.builtin.set_fact:
     alpine_sdcard_path: >
       {{  
         (ansible_mounts|selectattr('device', 'eq', '/dev/mmcblk0p1'))[0]['mount']
@@ -22,5 +22,5 @@
       }}
 
 - name: Asymworks Baseline Pre-Task (Alpine) | Register Diskless Mode
-  set_fact:
+  ansible.builtin.set_fact:
     alpine_diskless: "{{ (ansible_mounts|selectattr('mount','eq','/')|count)==0 }}" 

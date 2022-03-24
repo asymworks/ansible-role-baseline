@@ -12,6 +12,21 @@ RUN apk update \
     && apk add busybox-initscripts chrony openssh python3 sudo
 
 CMD ["/sbin/init"]
+{% elif item.image.split(':', 1)[0] in ['ubuntu'] %}
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       dbus dbus-user-session python3 openssh-server \
+       sudo systemd systemd-sysv xdg-user-dirs \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -Rf /usr/share/doc && rm -Rf /usr/share/man \
+    && apt-get clean \
+    && mkdir /var/run/dbus && chown messagebus:messagebus /var/run/dbus
+
+RUN rm -rf /lib/systemd/system/multi-user.target.wants/getty.target \
+    && echo "ip6tables" > /etc/modules-load.d/iptables.conf
+
+VOLUME ["/sys/fs/cgroup"]
+CMD ["/lib/systemd/systemd"]
 {% else %}
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \

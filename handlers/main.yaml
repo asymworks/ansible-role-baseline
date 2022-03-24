@@ -2,33 +2,25 @@
 # Handlers for asymworks.baseline
 
 - name: Asymworks Baseline | Restart sshd
-  service: name=sshd state=restarted
+  ansible.builtin.service: name=sshd state=restarted
 
 - name: Asymworks Baseline (Alpine) | Restart chrony
   # Chrony startup is horribly broken on Github CI
   when: __molecule_ci is not defined or not __molecule_ci
-  service: name=chronyd state=restarted
+  ansible.builtin.service: name=chronyd state=restarted
 
 - name: Asymworks Baseline (Debian) | Restart ntpd
-  service: name=ntp state=restarted
+  ansible.builtin.service: name=ntp state=restarted
 
 - name: Asymworks Baseline | Restart Networking
-  service: name=networking state=restarted
+  ansible.builtin.service: name=networking state=restarted
 
 - name: Asymworks Baseline (Alpine) | Update LBU
-  command:
+  ansible.builtin.command:
     cmd: lbu ci
   when: alpine_diskless
   become: true
   failed_when: ret.stderr != ''
-
-- name: Asymworks Baseline | Restart rsyslog
-  when: rsyslog_enabled
-  service: name=rsyslog state=restarted
-
-- name: Asymworks Baseline | Restart Agent
-  when: telegraf_enabled
-  service: name=telegraf state=restarted
 
 - name: Asymworks Baseline | Restart NFSv4 ID Mapper
   when: nfsv4_enabled

@@ -49,6 +49,33 @@ platforms:
     security_opts:
       - seccomp=unconfined
     command: /sbin/init
+
+  - name: alpine315
+    image: alpine:3.15
+    dockerfile: Dockerfile.j2
+    pre_build_image: false
+    privileged: true
+    security_opts:
+      - seccomp=unconfined
+    command: /sbin/init
+
+  - name: ubuntu20.04
+    image: ubuntu:20.04
+    dockerfile: Dockerfile.j2
+    pre_build_image: false
+    privileged: true
+    security_opts:
+      - seccomp=unconfined
+    command: /sbin/init
+
+  - name: ubuntu21.10
+    image: ubuntu:21.10
+    dockerfile: Dockerfile.j2
+    pre_build_image: false
+    privileged: true
+    security_opts:
+      - seccomp=unconfined
+    command: /sbin/init
 provisioner:
   name: ansible
 verifier:
