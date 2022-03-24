@@ -17,7 +17,7 @@ ufw_policy: deny
 ufw_ssh_appname: >-
   {{
       'OpenSSH'
-        if ansible_facts['os_distribution']|lower == 'ubuntu'
+        if ansible_facts['distribution']|lower == 'ubuntu'
         else 'SSH'
   }}
 
