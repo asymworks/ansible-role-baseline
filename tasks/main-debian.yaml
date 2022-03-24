@@ -4,7 +4,7 @@
 # Ensure Debian version is at least 9
 - name: Asymworks Baseline (Debian) | Check Version
   when: ansible_distribution_version is version('9', '<')
-  fail: msg='Unsupported Debian Version {{ ansible_distribution_version }} - Please Upgrade to Stretch or later'
+  ansible.builtin.fail: msg='Unsupported Debian Version {{ ansible_distribution_version }} - Please Upgrade to Stretch or later'
 
 # Install Basic Packages
 - name: Asymworks Baseline (Debian) | Install Core Packages

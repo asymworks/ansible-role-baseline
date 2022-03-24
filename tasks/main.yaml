@@ -3,12 +3,12 @@
 
 # Ensure Asset information is provided
 - name: Asymworks Baseline | Check Asset Name
-  fail: msg="The variable 'asset_name' is not set or is empty"
   when: (asset_name is not defined) or (asset_name|length == 0)
+  ansible.builtin.fail: msg="The variable 'asset_name' is not set or is empty"
 
 - name: Asymworks Baseline | Check Asset Tag
-  fail: msg="The variable 'asset_tag' is not set or is empty"
   when: (asset_tag is not defined) or (asset_tag|length == 0)
+  ansible.builtin.fail: msg="The variable 'asset_tag' is not set or is empty"
 
 # Run Distribution-Specific Setup Tasks
 - import_tasks: main-alpine.yaml

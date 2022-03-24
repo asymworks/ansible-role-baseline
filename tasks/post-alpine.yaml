@@ -9,7 +9,7 @@
 # and just look for an empty result.
 #
 - name: Asymworks Baseline Post-Task (Alpine) | Update Alpine LBU
-  command:
+  ansible.builtin.command:
     cmd: lbu ci
   when: alpine_diskless
   become: true
