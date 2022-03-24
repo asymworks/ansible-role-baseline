@@ -90,7 +90,7 @@
 - name: Asymworks Baseline | Allow SSH Connections
   community.general.ufw:
     rule: allow
-    name: SSH
+    name: {{ ufw_ssh_appname }}
 
 # Setup mSMTP
 - name: Asymworks Baseline | Copy mSMTP Configuration

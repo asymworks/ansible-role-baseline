@@ -14,6 +14,12 @@ ntp_server: time.nist.gov
 ufw_enabled: true
 ufw_logging: false
 ufw_policy: deny
+ufw_ssh_appname: >-
+  {{
+      'OpenSSH'
+        if ansible_facts['os_distribution']|lower == 'ubuntu'
+        else 'SSH'
+  }}
 
 # mSMTP Setup
 msmtp_enabled: true
