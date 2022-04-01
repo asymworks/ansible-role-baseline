@@ -15,6 +15,9 @@
 - name: Asymworks Baseline | Restart Networking
   ansible.builtin.service: name=networking state=restarted
 
+  - name: Asymworks Baseline | Update CA Certificates
+  ansible.builtin.command: /usr/sbin/update-ca-certificates
+
 - name: Asymworks Baseline (Alpine) | Update LBU
   ansible.builtin.command:
     cmd: lbu ci
