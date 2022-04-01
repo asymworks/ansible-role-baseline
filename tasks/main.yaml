@@ -28,8 +28,14 @@
   notify: Asymworks Baseline | Restart sshd
 
 # Disable WiFi Power Management
-- name: Asymworks Baseline | Disable WiFi Power Management
+- name: Asymworks Baseline | Check for /etc/network/interfaces
   when: ansible_facts['wlan0'] is defined and ansible_facts['wlan0']['active']
+  ansible.builtin.stat:
+    path: /etc/network/interfaces
+  register: rc_net_intfs
+
+- name: Asymworks Baseline | Disable WiFi Power Management
+  when: ansible_facts['wlan0'] is defined and ansible_facts['wlan0']['active'] and rc_net_intfs.stat.exists
   ansible.builtin.lineinfile:
     path: '/etc/network/interfaces'
     line: "\tpost-up iwconfig wlan0 power off"  # noqa: no-tabs
