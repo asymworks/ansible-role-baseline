@@ -93,6 +93,14 @@
     state: started
 
 # Install Certificates
+- name: Asymworks Baseline (Alpine) | Create CA Certificate Directory
+  ansible.builtin.file:
+    path: /usr/local/share/ca-certificates/asymworks
+    state: directory
+    mode: "0755"
+    owner: root
+    group: root
+
 - name: Asymworks Baseline (Alpine) | Copy CA Certificates
   ansible.builtin.copy:
     src: "{{ item }}"
