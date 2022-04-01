@@ -11,6 +11,7 @@
   ansible.builtin.apt:
     name:
       - apt-transport-https
+      - ca-certificates
       - curl
       - gnupg
       - msmtp
@@ -52,3 +53,18 @@
     name: ntp
     enabled: true
     state: started
+
+# Install Certificates
+- name: Asymworks Baseline (Debian) | Copy CA Certificates
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/{{ item }}"
+    mode: "0644"
+    owner: root
+    group: root
+  with_list:
+    - usr/local/share/ca-certificates/asymworks/Asymworks_Root_CA.crt
+    - usr/local/share/ca-certificates/asymworks/Asymworks_Network_CA.crt
+
+- name: Asymworks Baseline (Debian) | Install CA Certificates
+  ansible.builtin.shell: /usr/sbin/update-ca-certificates
