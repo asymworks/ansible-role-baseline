@@ -105,7 +105,7 @@
     - usr/local/share/ca-certificates/asymworks/Asymworks_Network_CA.crt
 
 - name: Asymworks Baseline (Alpine) | Install CA Certificates
-  ansible.builtin.shell: /usr/sbin/update-ca-certificates
+  ansible.builtin.command: /usr/sbin/update-ca-certificates
 
 # Persist /etc/init.d Updates
 - name: Asymworks Baseline (Alpine) | Persist /etc/init.d

@@ -67,4 +67,4 @@
     - usr/local/share/ca-certificates/asymworks/Asymworks_Network_CA.crt
 
 - name: Asymworks Baseline (Debian) | Install CA Certificates
-  ansible.builtin.shell: /usr/sbin/update-ca-certificates
+  ansible.builtin.command: /usr/sbin/update-ca-certificates
