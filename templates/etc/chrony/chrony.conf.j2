@@ -1,0 +1,11 @@
+# This file is managed by Ansible
+
+server {{ ntp_server }} prefer iburst
+driftfile /var/lib/chrony/chrony.drift
+rtcsync
+cmdport 0
+{% if has_rtc is defined and not has_rtc %}
+
+# Devices with no RTC may step the clock on any update to speed up acquisition
+makestep 1 -1
+{% endif %}

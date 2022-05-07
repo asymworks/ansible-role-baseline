@@ -60,19 +60,12 @@
 
 # Setup NTP Server
 - name: Asymworks Baseline (Alpine) | Configure Network Time Server
-  ansible.builtin.lineinfile:
-    path: /etc/chrony/chrony.conf
-    regex: '^pool'
-    line: 'pool {{ ntp_server }} prefer iburst'
-    state: present
-  notify:
-    - Asymworks Baseline (Alpine) | Restart chrony
-
-- name: Asymworks Baseline (Alpine) | Remove NTP Initial Step Slew
-  ansible.builtin.lineinfile:
-    path: /etc/chrony/chrony.conf
-    regex: '^initstepslew'
-    state: absent
+  ansible.builtin.template:
+    src: etc/chrony/chrony.conf.j2
+    dest: /etc/chrony/chrony.conf
+    owner: root
+    group: root
+    mode: "0644"
   notify:
     - Asymworks Baseline (Alpine) | Restart chrony
 
