@@ -1,6 +1,15 @@
 # This file is managed by Ansible
 
 server {{ ntp_server }} prefer iburst
+{% if ntp_bootstrap is defined and ntp_bootstrap %}
+
+# Hard-Code NIST Servers to bootstrap the clock at startup if the main
+# NTP server is unavailable or not sync'ed
+server 132.163.96.1 iburst
+server 132.163.96.2 iburst
+server 132.163.96.3 iburst
+
+{% endif %}
 driftfile /var/lib/chrony/chrony.drift
 rtcsync
 cmdport 0

@@ -9,6 +9,7 @@ sysctl_config: {}
 
 # Default NTP Server
 ntp_server: time.nist.gov
+ntp_bootstrap: false
 
 # Firewall Setup
 ufw_enabled: true

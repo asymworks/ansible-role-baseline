@@ -41,9 +41,10 @@ Dictionary of options to pass to [sysctl (8)](https://man7.org/linux/man-pages/m
 
 ```yaml
 ntp_server: time.nist.gov
+ntp_bootstrap: false
 ```
 
-Preferred NTP time server.
+Preferred NTP time server and whether to add hard-coded NIST server IPs to the server list so that Chrony can set the clock at startup even if the main server and DNS is unavailable.
 
 ```yaml
 ufw_enabled: true
