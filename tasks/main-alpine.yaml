@@ -6,6 +6,13 @@
   when: ansible_distribution_version is version('3.13', '<')
   ansible.builtin.fail: msg='Unsupported Alpine Version {{ ansible_distribution_version }} - Please Upgrade to 3.13 or later'
 
+# Fix Alpine kernel.org Mirror Domain
+- name: Asymworks Baseline (Alpine) | Fix kernel.org APK Mirror
+  ansible.builtin.replace:
+    path: /etc/apk/repositories
+    regex: sjc\.edge\.kernel\.org
+    replace: na.edge.kernel.org
+
 # Enable Community Repository
 - name: Asymworks Baseline (Alpine) | Enable Community Repository
   ansible.builtin.lineinfile:
@@ -105,6 +112,15 @@
     - usr/local/share/ca-certificates/asymworks/Asymworks_Root_CA.crt
     - usr/local/share/ca-certificates/asymworks/Asymworks_Network_CA.crt
   notify: Asymworks Baseline | Update CA Certificates
+
+# Persist Certificates
+- name: Asymworks Baseline (Alpine) | Persist Certificates
+  ansible.builtin.command:
+    cmd: lbu inc /usr/local/share/ca-certificates/asymworks
+  when: alpine_diskless
+  become: true
+  register: ret
+  failed_when: ret.stderr != ''
 
 # Persist /etc/init.d Updates
 - name: Asymworks Baseline (Alpine) | Persist /etc/init.d
