@@ -10,7 +10,7 @@
 - name: Asymworks Baseline (Alpine) | Fix kernel.org APK Mirror
   ansible.builtin.replace:
     path: /etc/apk/repositories
-    regex: sjc\.edge\.kernel\.org
+    regexp: sjc\.edge\.kernel\.org
     replace: na.edge.kernel.org
 
 # Enable Community Repository
