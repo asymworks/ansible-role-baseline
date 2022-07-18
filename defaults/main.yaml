@@ -48,3 +48,6 @@ nfsv4_idmap_service: >-
   }}
 
 nfs_automount: true
+
+# Restic Setup
+restic_install: true

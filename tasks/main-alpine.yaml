@@ -44,10 +44,18 @@
       - curl
       - msmtp
       - nfs-utils
-      - restic
-      - sqlite
       - ufw
       - vim
+
+# Install Restic and SQLite (not available on armhf)
+- name: Asymworks Baseline (Alpine) | Install Restic Packages
+  when: restic_install and ansible_architecture != 'armhf'
+  community.general.apk:
+    update_cache: true
+    state: present
+    name:
+      - restic
+      - sqlite
 
 # Populate /etc/timezone
 - name: Asymworks Baseline (Alpine) | Populate /etc/timezone
