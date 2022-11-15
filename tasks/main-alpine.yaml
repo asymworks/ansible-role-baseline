@@ -44,6 +44,7 @@
       - curl
       - msmtp
       - nfs-utils
+      - py3-pip
       - ufw
       - vim
 

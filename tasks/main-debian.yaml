@@ -20,6 +20,7 @@
       - ntp
       - python3-bcrypt
       - python3-passlib
+      - python3-pip
       - restic
       - sqlite3
       - ufw
