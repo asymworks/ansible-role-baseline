@@ -48,11 +48,12 @@ Preferred NTP time server and whether to add hard-coded NIST server IPs to the s
 
 ```yaml
 ufw_enabled: true
+ufw_ipv6: false
 ufw_logging: false
 ufw_policy: deny
 ```
 
-Whether the UFW firewall is enabled, and if logging is enabled (via the `LOG_KERN` facility). The `ufw_policy` sets the default policy for the firewall when no specific rules apply.
+Whether the UFW firewall is enabled, and if logging is enabled (via the `LOG_KERN` facility). The `ufw_policy` sets the default policy for the firewall when no specific rules apply.  If `ufw_ipv6` is truthy and the `ip6_tables` kernel module is present, the firewall will be enabled for IPv6.  If either is false, IPv6 will be disabled in UFW.
 
 ```yaml
 msmtp_enabled: true

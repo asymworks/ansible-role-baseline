@@ -13,6 +13,7 @@ ntp_bootstrap: false
 
 # Firewall Setup
 ufw_enabled: true
+ufw_ipv6: false
 ufw_logging: false
 ufw_policy: deny
 ufw_ssh_appname: >-

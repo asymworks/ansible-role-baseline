@@ -74,7 +74,7 @@
   ansible.builtin.lineinfile:
     dest: /etc/ufw/ufw.conf
     regexp: '^IPV6'
-    line: "IPV6={{ 'no' if ret.rc == 1 else 'yes' }}"
+    line: "IPV6={{ 'no' if ret.rc == 1 or not ufw_ipv6 else 'yes' }}"
     state: present
   register: ret
 
