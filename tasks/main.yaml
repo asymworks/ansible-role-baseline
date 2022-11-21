@@ -169,4 +169,4 @@
     state: 'absent'
   loop:
     - 40-restic-default
-    - 70-restic-prune
+    - 70-restic-prune-default
