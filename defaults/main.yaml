@@ -63,3 +63,10 @@ restic_forget:
   daily: 7
   weekly: 4
   monthly: 6
+
+restic_periodic_dir: >-
+  {{
+    '/etc/periodic/daily'
+      if ansible_facts['os_family']|lower == 'alpine'
+      else '/etc/cron.daily'
+  }}
