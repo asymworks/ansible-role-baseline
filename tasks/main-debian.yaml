@@ -25,7 +25,7 @@
       - vim
     update_cache: true
 
-- name: Asymworks Baseline (Alpine) | Install Restic Packages
+- name: Asymworks Baseline (Debian) | Install Restic Packages
   ansible.builtin.apt:
     name:
       - restic
@@ -61,7 +61,7 @@
     state: started
 
 # Install Certificates
-- name: Asymworks Baseline (Alpine) | Create CA Certificate Directory
+- name: Asymworks Baseline (Debian) | Create CA Certificate Directory
   ansible.builtin.file:
     path: /usr/local/share/ca-certificates/asymworks
     state: directory
@@ -80,3 +80,38 @@
     - usr/local/share/ca-certificates/asymworks/Asymworks_Root_CA.crt
     - usr/local/share/ca-certificates/asymworks/Asymworks_Network_CA.crt
   notify: Asymworks Baseline | Update CA Certificates
+
+# Setup Restic
+- name: Asymworks Baseline (Debian) | Setup Restic Directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+    state: "{{ 'directory' if restic_install else 'absent' }}"
+  loop:
+    - /etc/restic
+    - /etc/restic/exclude.d
+    - /etc/restic/include.d
+    - /etc/restic/pre-run.d
+
+- name: Asymworks Baseline (Debian) | Install Restic Script
+  when: restic_install
+  ansible.builtin.template:
+    src: "etc/periodic/{{ item }}.j2"
+    dest: "/etc/cron.daily/{{ item }}"
+    owner: root
+    group: root
+    mode: '0755'
+  loop:
+    - 40-restic-default
+    - 70-restic-prune-default
+
+- name: Asymworks Baseline (Debian) | Remove Restic Script
+  when: not restic_install
+  ansible.builtin.file:
+    src: "/etc/cron.daily/{{ item }}"
+    state: 'absent'
+  loop:
+    - 40-restic-default
+    - 70-restic-prune-default

@@ -160,3 +160,38 @@
         name: local
         enabled: true
         state: started
+
+# Setup Restic
+- name: Asymworks Baseline (Alpine) | Setup Restic Directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+    state: "{{ 'directory' if restic_install else 'absent' }}"
+  loop:
+    - /etc/restic
+    - /etc/restic/exclude.d
+    - /etc/restic/include.d
+    - /etc/restic/pre-run.d
+
+- name: Asymworks Baseline (Alpine) | Install Restic Script
+  when: restic_install
+  ansible.builtin.template:
+    src: "etc/periodic/{{ item }}.j2"
+    dest: "/etc/periodic/daily/{{ item }}"
+    owner: root
+    group: root
+    mode: '0755'
+  loop:
+    - 40-restic-default
+    - 70-restic-prune-default
+
+- name: Asymworks Baseline (Alpine) | Remove Restic Script
+  when: not restic_install
+  ansible.builtin.file:
+    src: "/etc/periodic/daily/{{ item }}"
+    state: 'absent'
+  loop:
+    - 40-restic-default
+    - 70-restic-prune-default
