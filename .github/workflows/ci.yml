@@ -16,7 +16,7 @@ defaults:
 jobs:
   lint:
     name: Lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Check out the codebase
         uses: actions/checkout@v2
@@ -31,14 +31,17 @@ jobs:
       - name: Install dependencies
         run: |
           pip3 install --upgrade pip
-          pip3 install ansible ansible-lint "molecule[docker,lint]"
+          pip3 install ansible ansible-lint "molecule[docker,lint]<4.0"
 
       - name: Lint code
         run: molecule lint -s ci
+        env:
+          CI_DOCKER_IMAGE: alpine:3.15
+          CI_DOCKER_COMMAND: /sbin/init
 
   molecule:
     name: Molecule
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
@@ -61,7 +64,7 @@ jobs:
           - image: ubuntu:20.04
             command: /lib/systemd/systemd
 
-          - image: ubuntu:21.10
+          - image: ubuntu:22.04
             command: /lib/systemd/systemd
 
     steps:
@@ -85,5 +88,6 @@ jobs:
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
-          MOLECULE_DOCKER_IMAGE: ${{ matrix.image }}
-          MOLECULE_DOCKER_COMMAND: ${{ matrix.command }}
+          CI_DOCKER_IMAGE: ${{ matrix.image }}
+          CI_DOCKER_COMMAND: ${{ matrix.command }}
+

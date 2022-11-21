@@ -6,7 +6,7 @@ driver:
 
 platforms:
   - name: instance
-    image: ${MOLECULE_DOCKER_IMAGE}
+    image: ${CI_DOCKER_IMAGE}
     dockerfile: Dockerfile.j2
     pre_build_image: false
     volumes:
@@ -14,7 +14,7 @@ platforms:
     privileged: true
     security_opts:
       - seccomp=unconfined
-    command: ${MOLECULE_DOCKER_COMMAND}
+    command: ${CI_DOCKER_COMMAND}
 
 provisioner:
   name: ansible
