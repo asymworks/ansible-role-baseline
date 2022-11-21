@@ -138,11 +138,10 @@
 - name: Asymworks Baseline | Setup Restic Directories
   ansible.builtin.file:
     path: "{{ item }}"
-    state: directory
     owner: root
     group: root
     mode: '0644'
-    state: "{{ 'present' if restic_install else 'absent' }}"
+    state: "{{ 'directory' if restic_install else 'absent' }}"
   loop:
     - /etc/restic
     - /etc/restic/exclude.d
