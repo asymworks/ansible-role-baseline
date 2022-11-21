@@ -160,7 +160,7 @@
     mode: '0755'
   loop:
     - 40-restic-default
-    - 70-restic-prune
+    - 70-restic-prune-default
 
 - name: Asymworks Baseline | Remove Restic Script
   when: not restic_install
