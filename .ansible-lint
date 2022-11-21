@@ -1,0 +1,8 @@
+---
+# Ansible Linter Settings
+
+warn_list:
+  - experimental
+
+skip_list:
+  - var-spacing
