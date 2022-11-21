@@ -11,10 +11,12 @@
   ansible.builtin.fail: msg="The variable 'asset_tag' is not set or is empty"
 
 # Run Distribution-Specific Setup Tasks
-- import_tasks: main-alpine.yaml
+- name: Docker | Run Alpine Distribution Tasks
+  ansible.builtin.import_tasks: main-alpine.yaml
   when: ansible_facts['os_family']|lower == 'alpine'
 
-- import_tasks: main-debian.yaml
+- name: Docker | Run Debian Distribution Tasks
+  ansible.builtin.import_tasks: main-debian.yaml
   when: ansible_facts['os_family']|lower == 'debian'
 
 # Disable Root SSH Logins
@@ -53,7 +55,7 @@
 
 # Process sysctl Tweaks
 - name: Asymworks Baseline | Process sysctl.conf Tweaks
-  ansible.builtin.sysctl:
+  ansible.posix.sysctl:
     name: '{{ item.key }}'
     value: '{{ item.value }}'
     state: present
