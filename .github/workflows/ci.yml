@@ -90,4 +90,3 @@ jobs:
           ANSIBLE_FORCE_COLOR: '1'
           CI_DOCKER_IMAGE: ${{ matrix.image }}
           CI_DOCKER_COMMAND: ${{ matrix.command }}
-
