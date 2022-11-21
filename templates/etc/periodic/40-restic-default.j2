@@ -36,6 +36,10 @@ find /etc/restic/include.d ! -type d -regex '.*/[0-9A-Za-z_-]\{1,\}$' -exec cat 
 # Run Backup
 restic backup --files-from ${INCLUDE_FILE} --exclude-file=${EXCLUDE_FILE}
 
+# Cleanup
+rm ${INCLUDE_FILE}
+rm ${EXCLUDE_FILE}
+
 # Forget old Snapshots
 {% if restic_forget -%}
 restic forget{% for k, v in restic_forget.items() %} --keep-{{k}}={{v}}{% endfor %}
