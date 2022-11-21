@@ -1,0 +1,27 @@
+#!/bin/sh
+# Restic Default Prune Script
+# ----------------------------------------
+# This file is managed by Ansible
+# ----------------------------------------
+
+set -euo pipefail
+
+# Repostory URI and Key
+export RESTIC_REPOSITORY="{{ restic_repository_uri }}"
+export RESTIC_PASSWORD="{{ restic_repository_key }}"
+
+{% if restic_repository_env %}
+# Repository Credentials
+{% for k, v in restic_repository_env.items() %}
+export {{ k }}={{ v | string | tojson }}
+{% endfor %}
+
+{% endif %}
+# Check for existing repository
+if ! restic snapshots >/dev/null 2>&1 ; then
+    echo "Non-existent Repository at ${RESTIC_REPOSITORY}"
+    exit 0
+fi
+
+# Prune repository
+restic prune

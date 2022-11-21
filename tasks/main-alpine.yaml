@@ -50,13 +50,13 @@
 
 # Install Restic and SQLite (not available on armhf)
 - name: Asymworks Baseline (Alpine) | Install Restic Packages
-  when: restic_install and ansible_architecture != 'armv6l'
+  when: ansible_architecture != 'armv6l'
   community.general.apk:
     update_cache: true
-    state: present
     name:
       - restic
       - sqlite
+    state: "{{ 'present' if restic_install else 'absent' }}"
 
 # Populate /etc/timezone
 - name: Asymworks Baseline (Alpine) | Populate /etc/timezone

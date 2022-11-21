@@ -1,0 +1,48 @@
+#!/bin/sh
+# Restic Default Backup Script
+# ----------------------------------------
+# This file is managed by Ansible
+# ----------------------------------------
+
+set -euo pipefail
+
+# Repostory URI and Key
+export RESTIC_REPOSITORY="{{ restic_repository_uri }}"
+export RESTIC_PASSWORD="{{ restic_repository_key }}"
+
+{% if restic_repository_env %}
+# Repository Credentials
+{% for k, v in restic_repository_env.items() %}
+export {{ k }}={{ v | string | tojson }}
+{% endfor %}
+
+{% endif %}
+# Initialize repository
+if ! restic snapshots >/dev/null 2>&1 ; then
+    echo "Initializing Repository at ${RESTIC_REPOSITORY}"
+    restic init
+fi
+
+# Run Pre-Backup Scripts
+find /etc/restic/pre-run.d ! -type d -executable -regex '.*/[0-9A-Za-z_-]\{1,\}$' -exec {} \;
+
+# Assemble Include and Exclude Files
+INCLUDE_FILE=$(mktemp restic-include-XXXXXX)
+EXCLUDE_FILE=$(mktemp restic-exclude-XXXXXX)
+
+find /etc/restic/exclude.d ! -type d -regex '.*/[0-9A-Za-z_-]\{1,\}$' -exec cat {} >> ${EXCLUDE_FILE} \;
+find /etc/restic/include.d ! -type d -regex '.*/[0-9A-Za-z_-]\{1,\}$' -exec cat {} >> ${INCLUDE_FILE} \;
+
+# Run Backup
+restic backup --files-from ${INCLUDE_FILE} --exclude-file=${EXCLUDE_FILE}
+
+# Forget old Snapshots
+{% if restic_forget -%}
+restic forget{% for k, v in restic_forget.items() %} --keep-{{k}}={{v}}{% endfor %}
+{%- endif %}
+
+
+# Notify Healthcheck.io of completion
+{% if restic_notify_cmd %}
+{{ restic_notify_cmd }}
+{% endif %}

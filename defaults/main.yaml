@@ -52,3 +52,14 @@ nfs_automount: true
 
 # Restic Setup
 restic_install: true
+restic_enabled: true
+
+restic_repository_uri:
+restic_repository_key:
+restic_repository_env:
+
+restic_notify_cmd:
+restic_forget:
+  daily: 7
+  weekly: 4
+  monthly: 6

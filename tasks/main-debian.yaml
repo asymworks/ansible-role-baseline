@@ -21,11 +21,16 @@
       - python3-bcrypt
       - python3-passlib
       - python3-pip
-      - restic
-      - sqlite3
       - ufw
       - vim
     update_cache: true
+
+- name: Asymworks Baseline (Alpine) | Install Restic Packages
+  ansible.builtin.apt:
+    name:
+      - restic
+      - sqlite3
+    state: "{{ 'present' if restic_install else 'absent' }}"
 
 # Set System Timezone
 - name: Asymworks Baseline (Debian) | Set Timezone

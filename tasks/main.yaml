@@ -133,3 +133,30 @@
   # This fails Molecule idempotence test on Debian, not sure yet why since
   # other systemd services do not (e.g. Telegraf).
   tags: ['molecule-idempotence-notest']
+
+# Setup Restic
+- name: Asymworks Baseline | Setup Restic Directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0644'
+    state: "{{ 'present' if restic_install else 'absent' }}"
+  loop:
+    - /etc/restic
+    - /etc/restic/exclude.d
+    - /etc/restic/include.d
+    - /etc/restic/pre-run.d
+
+- name: Asymworks Baseline | Install Restic Script
+  ansible.builtin.template:
+    src: "periodic/{{ item }}.j2"
+    dest: "/etc/periodic/daily/{{ item }}"
+    owner: root
+    group: root
+    mode: '0755'
+    state: "{{ 'present' if restic_install else 'absent' }}"
+  loop:
+    - 40-restic-default
+    - 70-restic-prune
