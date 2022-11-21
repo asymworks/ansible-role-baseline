@@ -52,7 +52,6 @@
 - name: Asymworks Baseline (Alpine) | Install Restic Packages
   when: ansible_architecture != 'armv6l'
   community.general.apk:
-    update_cache: true
     name:
       - restic
       - sqlite
