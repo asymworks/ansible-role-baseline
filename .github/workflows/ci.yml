@@ -81,7 +81,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip3 install --upgrade pip
-          pip3 install ansible ansible-lint "molecule[docker,lint]"
+          pip3 install ansible ansible-lint "molecule[docker,lint]<4.0"
 
       - name: Test code
         run: molecule test -s ci
