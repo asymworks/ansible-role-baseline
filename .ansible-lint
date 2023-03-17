@@ -5,4 +5,5 @@ warn_list:
   - experimental
 
 skip_list:
+  - meta-no-info
   - var-spacing

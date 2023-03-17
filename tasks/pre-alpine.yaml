@@ -4,7 +4,8 @@
 
 # Lookup Repository Version (i.e. MAJOR.minor version) as alpine_repo_version
 - name: Asymworks Baseline Pre-Task (Alpine) | Register Alpine Version
-  ansible.builtin.set_fact: alpine_repo_ver="{{ (ansible_distribution_version|split('.'))[0:2]|join('.') }}"
+  ansible.builtin.set_fact:
+    alpine_repo_ver: "{{ (ansible_distribution_version|split('.'))[0:2]|join('.') }}"
 
 # Determine whether the Alpine installation was installed as Diskless or Disk
 # Mode (will later tell us whether to invoke LBU). This will create three new

@@ -8,7 +8,7 @@
 # lbu st immediately after shows nothing).  So we'll ignore the return code
 # and just look for an empty result.
 #
-- name: Asymworks Baseline Post-Task (Alpine) | Update Alpine LBU
+- name: Asymworks Baseline Post-Task (Alpine) | Update Alpine LBU  # noqa: no-changed-when
   ansible.builtin.command:
     cmd: lbu ci
   when: alpine_diskless

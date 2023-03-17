@@ -4,11 +4,13 @@
 # Ensure Asset information is provided
 - name: Asymworks Baseline | Check Asset Name
   when: (asset_name is not defined) or (asset_name|length == 0)
-  ansible.builtin.fail: msg="The variable 'asset_name' is not set or is empty"
+  ansible.builtin.fail:
+    msg: "The variable 'asset_name' is not set or is empty"
 
 - name: Asymworks Baseline | Check Asset Tag
   when: (asset_tag is not defined) or (asset_tag|length == 0)
-  ansible.builtin.fail: msg="The variable 'asset_tag' is not set or is empty"
+  ansible.builtin.fail: 
+    msg: "The variable 'asset_tag' is not set or is empty"
 
 # Run Distribution-Specific Setup Tasks
 - name: Docker | Run Alpine Distribution Tasks
@@ -21,12 +23,20 @@
 
 # Disable Root SSH Logins
 - name: Asymworks Baseline | Disable SSH Root Login
-  ansible.builtin.lineinfile: dest=/etc/ssh/sshd_config state=present regexp='^PermitRootLogin ' line='PermitRootLogin no'
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    state: present
+    regexp: '^PermitRootLogin '
+    line: 'PermitRootLogin no'
   notify: Asymworks Baseline | Restart sshd
 
 # Disable SSH Password Logins
 - name: Asymworks Baseline | Disable SSH Password Login
-  ansible.builtin.lineinfile: dest=/etc/ssh/sshd_config state=present regexp='^PasswordAuthentication ' line='PasswordAuthentication no'
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    state: present
+    regexp: '^PasswordAuthentication '
+    line: 'PasswordAuthentication no'
   notify: Asymworks Baseline | Restart sshd
 
 # Disable WiFi Power Management
@@ -165,7 +175,7 @@
 - name: Asymworks Baseline | Remove Restic Script
   when: not restic_install
   ansible.builtin.file:
-    src: "{{ restic_periodic_dir }}/{{ item }}"
+    path: "{{ restic_periodic_dir }}/{{ item }}"
     state: 'absent'
   loop:
     - 40-restic-default

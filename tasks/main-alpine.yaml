@@ -4,7 +4,8 @@
 # Check Alpine Version >= 3.13 (Asymworks Package Repo Limitation)
 - name: Asymworks Baseline (Alpine) | Check Alpine Version
   when: ansible_distribution_version is version('3.13', '<')
-  ansible.builtin.fail: msg='Unsupported Alpine Version {{ ansible_distribution_version }} - Please Upgrade to 3.13 or later'
+  ansible.builtin.fail:
+    msg: 'Unsupported Alpine Version {{ ansible_distribution_version }} - Please Upgrade to 3.13 or later'
 
 # Fix Alpine kernel.org Mirror Domain
 - name: Asymworks Baseline (Alpine) | Fix kernel.org APK Mirror
@@ -122,7 +123,7 @@
   notify: Asymworks Baseline | Update CA Certificates
 
 # Persist Certificates
-- name: Asymworks Baseline (Alpine) | Persist Certificates
+- name: Asymworks Baseline (Alpine) | Persist Certificates  # noqa: no-changed-when
   ansible.builtin.command:
     cmd: lbu inc /usr/local/share/ca-certificates/asymworks
   when: alpine_diskless
@@ -131,7 +132,7 @@
   failed_when: ret.stderr != ''
 
 # Persist /etc/init.d Updates
-- name: Asymworks Baseline (Alpine) | Persist /etc/init.d
+- name: Asymworks Baseline (Alpine) | Persist /etc/init.d  # noqa: no-changed-when
   ansible.builtin.command:
     cmd: lbu inc /etc/init.d
   when: alpine_diskless
