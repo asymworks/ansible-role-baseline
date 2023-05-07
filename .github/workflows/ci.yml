@@ -31,13 +31,13 @@ jobs:
       - name: Install dependencies
         run: |
           pip3 install --upgrade pip
-          pip3 install ansible ansible-lint "molecule[lint]" "molecule-plugins[docker]"
+          pip3 install ansible ansible-lint
 
       - name: Lint code
-        run: molecule lint -s ci
-        env:
-          CI_DOCKER_IMAGE: alpine:3.15
-          CI_DOCKER_COMMAND: /sbin/init
+        run: |
+          set -e
+          yamllint .
+          ansible-lint .
 
   molecule:
     name: Molecule
@@ -55,10 +55,10 @@ jobs:
           - image: alpine:3.15
             command: /sbin/init
 
-          - image: debian:9
+          - image: debian:10
             command: /lib/systemd/systemd
 
-          - image: debian:10
+          - image: debian:11
             command: /lib/systemd/systemd
 
           - image: ubuntu:20.04
@@ -81,7 +81,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip3 install --upgrade pip
-          pip3 install ansible ansible-lint "molecule[lint]" "molecule-plugins[docker]"
+          pip3 install ansible ansible-lint molecule "molecule-plugins[docker]"
 
       - name: Test code
         run: molecule test -s ci
