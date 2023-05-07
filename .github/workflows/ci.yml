@@ -46,13 +46,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image: alpine:3.13
-            command: /sbin/init
-
           - image: alpine:3.14
             command: /sbin/init
 
           - image: alpine:3.15
+            command: /sbin/init
+
+          - image: alpine:3.16
             command: /sbin/init
 
           - image: debian:10
